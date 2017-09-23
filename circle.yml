@@ -1,11 +1,40 @@
-machine:
-  post:
-    - pyenv global 2.7.12 3.4.4 3.5.3 3.6.2 pypy-4.0.1
+version: 2
+workflows:
+  version: 2
+  test:
+    jobs:
+      - test-3.6
+      - test-3.5
+      - test-3.4
+      - test-3.3
+      - test-2.7
+      - test-latest
+jobs:
+  test-3.6: &test-template
+  docker:
+    - image: circleci/python:3.6
+  steps:
+    - checkout
+    - test:
+      python test.py
+  test-3.5:
+    <<: *test-template
+    docker:
+      - image: circleci/python:3.5
+  test-3.4:
+    <<: *test-template
+    docker:
+      - image: circleci/python:3.4
+  test-3.3:
+    <<: *test-template
+    docker:
+      - image: circleci/python:3.3
+  test-2.7:
+    <<: *test-template
+    docker:
+      - image: circleci/python:2.7
+  test-latest:
+    <<: *test-template
+    docker:
+      - image: circleci/python:latest
 
-dependencies:
-   pre:
-     - pip install tox
-
-test:
-   override:
-     - tox
